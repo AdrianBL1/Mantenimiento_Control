@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "906158301320",
+    "project_id": "controlmantenimiento-eb25a",
+    "storage_bucket": "controlmantenimiento-eb25a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906158301320:android:a670a7f30eaa8a56103f3d",
+        "android_client_info": {
+          "package_name": "com.example.mantenimiento_control"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906158301320-caa8oscrmdc0a156bjtgiuk8222c4pup.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw7sC7z2wip5yuNp5p3fr-LTcQdThu4c8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906158301320-caa8oscrmdc0a156bjtgiuk8222c4pup.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

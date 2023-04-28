@@ -1,0 +1,77 @@
+<resources>
+    <!-- NOMBRE DE LA APLICACIÓN -->
+    <string name="app_name">Control Mantenimiento</string>
+
+    <!-- GUARDAR PREFERENCIAS-->
+    <string name="prefs_file">com.adrianbl.mantenimiento_control.PREFERENCE_FILE_KEY</string>
+
+    <!-- TEXTOS -->
+    <string name="password">Contraseña</string>
+    <string name="name">Nombre completo</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="all">TODO</string>
+    <string name="user_email">userdefault@gmail.com</string>
+    <string name="user_name">User Default</string>
+    <string name="update_profile">Guardar</string>
+    <string name="delete_account">Eliminar cuenta</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="continue_check_email">Continuar</string>
+    <string name="title_account_recovery">Recuperación de la cuenta</string>
+    <string name="recovery_account">Enviar</string>
+    <string name="delete">Eliminar</string>
+
+    <!-- ROLES -->
+    <string-array name="roles">
+        <item>Jardinería</item>
+        <item>Limpieza</item>
+        <item>Mobiliario</item>
+        <item>Dpto. de Electricista</item>
+        <item>Centro de Computo</item>
+        <item>Nave Industrial</item>
+        <item>Taller de Electronica</item>
+        <item>Lab. de Bioquímica</item>
+        <item>Lab. de Ambiental</item>
+        <item>Recursos Materiales</item>
+    </string-array>
+
+    <!-- AREAS -->
+    <string-array name="areas">
+        <item>Biblioteca</item>
+        //a_biblioteca
+        <item>Campo</item>
+        //a_campo
+        <item>Centro de Computo</item>
+        //a_c_computo
+        <item>Edificio de Investigadores</item>
+        //a_e_investigadores
+        <item>Edificio Principal</item>
+        //a_e_principal
+        <item>Edificio H</item>
+        //a_e_h
+        <item>Estacionamiento</item>
+        //a_estacionamiento
+        <item>Explanada</item>
+        //a_explanada
+        <item>Humedales</item>
+        //a_humedales
+        <item>Jardines</item>
+        //a_jardines
+        <item>Nave Industrial</item>
+        //a_nave_industrial
+        <item>Lab. de Ambiental</item>
+        //a_l_ambiental
+        <item>Lab. de Bioquímica</item>
+        //a_l_bioquimica
+        <item>Patio</item>
+    </string-array>
+
+    <!-- ESTADOS -->
+    <string-array name="estados">
+        <item>Solucionado</item>
+        <item>No Solucionado</item>
+        <item>Pendiente</item>
+        <item>En revisión</item>
+        <item>Indefinido</item>
+    </string-array>
+</resources>
