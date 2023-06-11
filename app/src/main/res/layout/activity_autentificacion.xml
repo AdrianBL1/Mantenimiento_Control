@@ -15,7 +15,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="serif"
-        android:text="Mantenimiento\n Iniciar Sesión"
+        android:text="@string/login_titulo"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -38,7 +38,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:srcCompat="@drawable/mantenimiento" />
+        app:srcCompat="@drawable/mantenimiento"
+        android:contentDescription="@string/login_titulo" />
 
 
     <ScrollView
@@ -66,7 +67,7 @@
                 android:drawablePadding="16dp"
                 android:ems="10"
                 android:fontFamily="monospace"
-                android:hint="Ingresa Correo"
+                android:hint="@string/ingresa_correo"
                 android:inputType="textEmailAddress"
                 android:minHeight="48dp"
                 android:padding="16dp"
@@ -89,7 +90,7 @@
                 android:drawablePadding="16dp"
                 android:ems="10"
                 android:fontFamily="monospace"
-                android:hint="Ingresa Contraseña"
+                android:hint="@string/ingresa_contrase_a"
                 android:inputType="textPassword"
                 android:minHeight="48dp"
                 android:padding="16dp"
@@ -107,7 +108,7 @@
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/ic_buttom"
                 android:fontFamily="monospace"
-                android:text="Ingresar" />
+                android:text="@string/ingresar" />
 
             <!--
             <Button
@@ -124,8 +125,7 @@
                 android:minHeight="48dp"
                 android:padding="10dp"
                 android:text="Ingresar con Google" />
-
-            -->
+                -->
 
             <Button
                 android:id="@+id/btn_registrar"
@@ -136,7 +136,7 @@
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/ic_buttom"
                 android:fontFamily="monospace"
-                android:text="Registrar" />
+                android:text="@string/registrar" />
 
             <Button
                 android:id="@+id/btn_forgotPassword"
@@ -148,7 +148,7 @@
                 android:layout_marginBottom="32dp"
                 android:background="@drawable/ic_buttom"
                 android:fontFamily="monospace"
-                android:text="¿Has olvidado tu contraseña?" />
+                android:text="@string/lost_contrase_a" />
         </LinearLayout>
     </ScrollView>
 

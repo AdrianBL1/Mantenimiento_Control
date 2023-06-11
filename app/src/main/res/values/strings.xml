@@ -16,10 +16,30 @@
     <string name="update_profile">Guardar</string>
     <string name="delete_account">Eliminar cuenta</string>
     <string name="change_password">Cambiar contraseña</string>
-    <string name="continue_check_email">Continuar</string>
-    <string name="title_account_recovery">Recuperación de la cuenta</string>
-    <string name="recovery_account">Enviar</string>
-    <string name="delete">Eliminar</string>
+    <string name="lista_de_incidencias">Lista de Incidencias</string>
+    <string name="registrar_incidencia">Registrar Incidencia</string>
+    <string name="provider">provider</string>
+    <string name="correo">correo</string>
+    <string name="perfil">Perfil</string>
+    <string name="panel_principal">Panel Principal</string>
+    <string name="horario_de_salida">Horario de salida</string>
+    <string name="horario_de_entrada">Horario de entrada</string>
+    <string name="datos_de_trabajo">Datos de trabajo</string>
+    <string name="tel_fono">Teléfono</string>
+    <string name="direcci_n">Dirección</string>
+    <string name="datos_b_sicos">Datos básicos</string>
+    <string name="asigna_o_modifica_datos">Asigna o modifica los datos</string>
+    <string name="obtener_datos">Obtener datos</string>
+    <string name="selecciona_un_usuario">Selecciona un usuario</string>
+    <string name="funciones_administraci_n_de_usuarios_y_roles">Funciones administración de usuarios y roles.</string>
+    <string name="administraci_n">ADMINISTRACIÓN</string>
+    <string name="login_titulo">Mantenimiento\n Iniciar Sesión</string>
+    <string name="ingresa_correo">Ingresa Correo</string>
+    <string name="ingresa_contrase_a">Ingresa Contraseña</string>
+    <string name="ingresar">Ingresar</string>
+    <string name="registrar">Registrar</string>
+    <string name="lost_contrase_a">¿Has olvidado tu contraseña?</string>
+    <string name="registrar_acci_n">Registrar acción</string>
 
     <!-- ROLES -->
     <string-array name="roles">

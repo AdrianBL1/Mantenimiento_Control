@@ -1,16 +1,19 @@
 package com.example.mantenimiento_control
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
 import com.example.mantenimiento_control.models.Incidencia
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,8 +26,10 @@ import java.io.File
 
 class ReporteIncidente : AppCompatActivity() {
 
+    private var Perfil_Bitlocalfile: Bitmap? = null
     private val db = FirebaseFirestore.getInstance()
     lateinit var emailReport : String
+    lateinit var emailAtencion : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +54,7 @@ class ReporteIncidente : AppCompatActivity() {
         val img_estado_inci = findViewById<ImageView>(R.id.imageViewEstadoIncidente)
 
         val btn_accion = findViewById<Button>(R.id.btn_registrar_accion)
+        val btn_export = findViewById<Button>(R.id.btn_export)
 
         val key = intent.getStringExtra("key")
         val database = Firebase.database
@@ -74,9 +80,15 @@ class ReporteIncidente : AppCompatActivity() {
                     estado.setText(incidencia?.estado.toString())
                     atenciondatetime.setText(incidencia.datetimeAtencion.toString())
                     atencion_usuario.setText(incidencia.usuarioAtencion.toString())
+                    emailAtencion = incidencia.usuarioAtencion.toString()
                     atencion_rol.setText(incidencia?.rol.toString())
                     descripcion_reporte.setText(incidencia?.descripcionEstado.toString())
                     mostrarImagenEstadoIncidencia(incidencia.imagenEstadoIncidencia.toString())
+                }
+
+                if(incidencia?.estado == "Pendiente"){
+                    val cardViewContent2 = findViewById<CardView>(R.id.CardViewContent2)
+                    cardViewContent2.visibility = View.INVISIBLE
                 }
 
                 //Configurado del Color por Estado
@@ -91,7 +103,14 @@ class ReporteIncidente : AppCompatActivity() {
                 //Bloqueo del boton de registro de accion
                 if (incidencia?.estado == "Solucionado"){
                     btn_accion.setOnClickListener {
-                        showAlert()
+                        showAlert("Esta incidencia a sido marcada como: \n Solucionada.")
+                    }
+                }
+
+                //Bloqueo del boton de exportacion
+                if (incidencia?.estado != "Solucionado"){
+                    btn_export.setOnClickListener {
+                        showAlert("Esta incidencia debe ser marcada como 'Solucionado' \n para poder acceder a esta función.")
                     }
                 }
             }
@@ -146,6 +165,15 @@ class ReporteIncidente : AppCompatActivity() {
             startActivity(intent)
         }
 
+        btn_export.setOnClickListener {
+            val intent = Intent(this, ExportReport::class.java).apply {
+                putExtra("key", key)
+                putExtra("emailReport", emailReport)
+                putExtra("emailAtencion", emailAtencion)
+            }
+            startActivity(intent)
+        }
+
         //Clic a nombre del usuario
         report_usuario.setOnClickListener {
             //Asignacion de valores
@@ -167,6 +195,8 @@ class ReporteIncidente : AppCompatActivity() {
             val horaEntrada = view.findViewById<TextView>(R.id.horarioEntradaTextView)
             val horaSalida = view.findViewById<TextView>(R.id.horarioSalidaTextView)
 
+            val img_perfil = view.findViewById<ImageView>(R.id.dialog_profileImageView)
+
             val exitbutton = view.findViewById<Button>(R.id.exitbutton)
 
             //Obteniendo los datos de firebase del usuario (email) seleccionado
@@ -185,6 +215,9 @@ class ReporteIncidente : AppCompatActivity() {
                 }else{
                     horaSalida.setText("Horario Salida: ${it.get("horaSalida")}")
                 }
+
+                mostrarImagenPerfil(it.get("fotoUsuario").toString())
+                img_perfil.setImageBitmap(Perfil_Bitlocalfile)
             }
 
             exitbutton.setOnClickListener {
@@ -193,11 +226,26 @@ class ReporteIncidente : AppCompatActivity() {
         }
     }
 
-    private fun showAlert() {
+    private fun mostrarImagenPerfil(imgName: String){
+        //Acceder a Firebase Storage, se crea referencia a incidencias_estados
+        val storageRef = FirebaseStorage.getInstance().reference.child("/perfiles/$imgName")
+        //Se crea el archivo temporal
+        val localfile = File.createTempFile("tempImage","jpg")
+        //Se obtiene el archivo
+        storageRef.getFile(localfile).addOnCompleteListener{
+            //Se pasa la imagen obtenida de Firebase Storage a una imagen Bitmap
+            Perfil_Bitlocalfile = BitmapFactory.decodeFile(localfile.absolutePath)
+        }.addOnFailureListener{ exception ->
+            //Mensaje de error
+            Toast.makeText(applicationContext, "Ha ocurrido un Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showAlert(mensaje : String) {
         val builder = AlertDialog.Builder(this)
 
         builder.setTitle("AVISO")
-        builder.setMessage("Esta incidencia a sigo marcada como: \n Solucionado.")
+        builder.setMessage(mensaje)
         builder.setPositiveButton("Aceptar", null)
 
         val dialog: AlertDialog = builder.create()

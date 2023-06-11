@@ -1,9 +1,15 @@
 package com.example.mantenimiento_control
 
 import android.app.ProgressDialog
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,40 +17,48 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mantenimiento_control.models.Incidencia
+import com.example.mantenimiento_control.models.Usuario
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import java.io.File
 
 enum class ProviderType{
-    BASIC,
-    GOOGLE
+    BASIC
 }
 
 class MainActivity : AppCompatActivity() {
 
     private val database = Firebase.database
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var messagesListener: ValueEventListener
 
     private val listaIncidencias: MutableList<Incidencia> = ArrayList()
 
     val ref = database.getReference("incidencias")
-    val currentUser = FirebaseAuth.getInstance().currentUser
+    //val currentUser = FirebaseAuth.getInstance().currentUser TODO: Pendiente de uso
+
+    var listaUsuarios: List<String> = emptyList()
+    var target: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val incidenciasRecyclerView = findViewById<RecyclerView>(R.id.incidenciasRecyclerView)
 
         //Obtenemos los datos del activity anterior
         val bundle = intent.extras
@@ -52,6 +66,9 @@ class MainActivity : AppCompatActivity() {
         val email = bundle?.getString("email")
         //Provider 'de ser necesario'
         val provider = bundle?.getString("provider")
+
+        val incidenciasRecyclerView = findViewById<RecyclerView>(R.id.incidenciasRecyclerView)
+
         //En caso de existir la excension de no poder obtener el email
         //if(email == ""){
         //    if (currentUser != null) {
@@ -62,15 +79,83 @@ class MainActivity : AppCompatActivity() {
         setup(email = email?:"", provider = provider?:"")
 
         //Guardando datos -> Sesión
-        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-        prefs.putString("email", "$email")
-        prefs.putString("provider", "$provider")
-        prefs.apply()
+        //TODO: COMENTAMOS ESTA SECCION TEMPORALMENTE
+        //val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+        //prefs.putString("email", "$email")
+        //prefs.putString("provider", "$provider")
+        //prefs.apply()
+        guardarArchivo(email?:"No se pudo obtener el email", provider = provider?:"No se pudo obtener el proveedor")
 
         //Limpiando la lista de Incidencias
         listaIncidencias.clear()
-        //Se ejecuta el RecyclerView que contiene las Incidencias
-        setupRecyclerView(incidenciasRecyclerView)
+
+        if (!checkInternet()){
+            val intent = Intent(this, WithoutConnection::class.java).apply {
+                putExtra("email",email)
+                putExtra("provider",provider)
+            }
+            startActivity(intent)
+            finish()
+        } else{
+            //Carga el reciclerview
+            val btn_registrar_incidencia = findViewById<Button>(R.id.btn_registrar_incidencia)
+            val btn_fab = findViewById<FloatingActionButton>(R.id.fab)
+            val btn_fab2 = findViewById<FloatingActionButton>(R.id.fab2)
+            target = email
+            //Se ejecuta el RecyclerView que contiene las Incidencias
+            db.collection("usuarios")
+                .get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        Log.d(TAG, "${document.id} => ${document.data}")
+                        listaUsuarios += listOf(document.id)
+                        val found = target in listaUsuarios
+                        if (found){
+                            db.collection("usuarios").document(email.toString()).get().addOnSuccessListener {
+                                if ((it.get("rol") as String?) != "Rol no asignado"){
+                                    btn_registrar_incidencia.setEnabled(true)
+                                    btn_fab.setEnabled(true)
+                                    btn_fab2.setEnabled(true)
+                                    setupRecyclerView(incidenciasRecyclerView)
+                                }else{
+                                    showAlertRol()
+                                }
+                            }
+                        }else{
+                            Toast.makeText(this,"Necesita registrar sus Datos Primero", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
+                }
+        }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
+
+        return (capabilities != null && capabilities.hasCapability(NET_CAPABILITY_INTERNET))
+
+    }
+
+    private fun checkInternet() : Boolean {
+        if (isNetworkAvailable()) {
+            return true
+        }else{
+            return false
+        }
+    }
+
+    private fun showAlertRol() {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("AVISO")
+        builder.setMessage("Aún no le han asignado un Rol \n Hasta no tener uno no podrá acceder a las funciones.")
+        builder.setPositiveButton("Aceptar", null)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     private fun setup(email: String, provider: String) {
@@ -79,11 +164,17 @@ class MainActivity : AppCompatActivity() {
         val btn_perfil = findViewById<Button>(R.id.btn_perfil)
         val btn_registrar_incidencia = findViewById<Button>(R.id.btn_registrar_incidencia)
         val btn_fab = findViewById<FloatingActionButton>(R.id.fab)
+        val btn_fab2 = findViewById<FloatingActionButton>(R.id.fab2)
 
         // Datos de Inicio
         title = "Panel Principal"
         text_correo.text = email
         text_provider.text = provider
+
+        //Config inicial
+        btn_registrar_incidencia.setEnabled(false)
+        btn_fab.setEnabled(false)
+        btn_fab2.setEnabled(false)
 
         //Obtener Rol
         /* TODO: ERROR AL CARGAR LOS DATOS DEL ROL (EN REVISIÓN)
@@ -131,7 +222,28 @@ class MainActivity : AppCompatActivity() {
             val dialog = builder.create()
             dialog.show()
 
-            //TODO: FALTA OBTENER LOS PARAMETROS SELECCIONADOS
+        }
+
+        btn_fab2.setOnClickListener {
+            val intent = Intent(this, Estadisticas::class.java)
+            startActivity(intent)
+        }
+    }
+
+    //Guardado de archivos
+    fun guardarArchivo(email: String, provider: String) {
+        try {
+            val nombreArchivo1 = "prefs_email.txt"
+            val nombreArchivo2 = "prfs_provider.txt"
+            val archivo1 = File(applicationContext.getExternalFilesDir(null), nombreArchivo1)
+            val archivo2 = File(applicationContext.getExternalFilesDir(null), nombreArchivo2)
+            archivo1.createNewFile()
+            archivo1.writeText(email)
+            archivo2.createNewFile()
+            archivo2.writeText(provider)
+            Toast.makeText(this, "Archivos creados.", Toast.LENGTH_SHORT).show()
+        } catch (ex: Exception) {
+            Log.e("TAG", "Error al escribir fichero a memoria interna")
         }
     }
 
@@ -182,6 +294,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         ref.addValueEventListener(messagesListener)
+
+        deleteSwipe(recyclerView)
     }
 
     //Adaptador
@@ -196,7 +310,7 @@ class MainActivity : AppCompatActivity() {
 
         //Creacion de elemento de la lista
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val incidencia= values[position]
+            val incidencia = values[position]
             holder.txtArea.text = incidencia.area
             holder.txtDateTime.text = incidencia.datetimeReporte
             holder.txtEstado.text = incidencia.estado
@@ -244,5 +358,36 @@ class MainActivity : AppCompatActivity() {
             val txtEstado: TextView = view.findViewById(R.id.txtEstado)
             val img: ImageView? = view.findViewById(R.id.posterImageView)
         }
+    }
+
+    private fun deleteSwipe(recyclerView: RecyclerView){
+        val touchHelperCallback: ItemTouchHelper.SimpleCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                val builder = AlertDialog.Builder(this@MainActivity)
+                val positiveButtonClick = { dialog: DialogInterface, which: Int ->
+
+                    listaIncidencias.get(viewHolder.adapterPosition).key?.let { ref.child(it).setValue(null) }
+                    listaIncidencias.removeAt(viewHolder.adapterPosition)
+                    recyclerView.adapter?.notifyItemRemoved(viewHolder.adapterPosition)
+                    recyclerView.adapter?.notifyDataSetChanged()
+
+                    Toast.makeText(this@MainActivity, "Incidencia borrada.", Toast.LENGTH_SHORT).show()
+                }
+
+                builder.setTitle("AVISO")
+                builder.setMessage("¿Desea borrar ésta incidencia?")
+                builder.setNegativeButton("Cancelar", null)
+                builder.setPositiveButton("Aceptar", DialogInterface.OnClickListener(function = positiveButtonClick))
+                val dialog: AlertDialog = builder.create()
+                dialog.show()
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(touchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 }

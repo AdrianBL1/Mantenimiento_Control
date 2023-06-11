@@ -29,7 +29,7 @@
                 android:layout_width="216dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="Panel Principal"
+                android:text="@string/panel_principal"
                 android:textSize="24sp" />
 
             <Button
@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/ic_buttom"
-                android:text="Perfil"
+                android:text="@string/perfil"
                 app:icon="@drawable/baseline_person_24" />
 
         </GridLayout>
@@ -54,8 +54,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="10"
-                android:text="correo"
-                android:textAlignment="center"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/correo"
+                android:textAlignment="textStart"
                 android:textSize="16sp" />
 
             <TextView
@@ -63,8 +66,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="10"
-                android:text="provider"
-                android:textAlignment="center"
+                android:drawableStart="@drawable/baseline_info_24"
+                android:drawablePadding="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/provider"
+                android:textAlignment="textStart"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -75,7 +81,7 @@
             android:layout_margin="10dp"
             android:fontFamily="monospace"
             android:background="@drawable/ic_buttom"
-            android:text="Registrar Incidencia" />
+            android:text="@string/registrar_incidencia" />
 
         <TextView
             android:id="@+id/textView3"
@@ -83,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:fontFamily="monospace"
-            android:text="Lista de Incidencias"
+            android:text="@string/lista_de_incidencias"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -118,6 +124,21 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:src="@drawable/baseline_filter_list_24"
+            app:borderWidth="0dp"
+            app:elevation="4dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="end|bottom"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="80dp"
+            android:src="@drawable/baseline_bar_chart_24"
             app:borderWidth="0dp"
             app:elevation="4dp" />
 

@@ -1,8 +1,8 @@
 package com.example.mantenimiento_control
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
@@ -13,7 +13,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuth.AuthStateListener
+import com.google.firebase.auth.ktx.auth
+import java.io.File
 
 
 class Autentificacion : AppCompatActivity() {
@@ -43,16 +44,23 @@ class Autentificacion : AppCompatActivity() {
 
     //Manejo de Sesiones
     private fun session() {
-        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
-        val email = prefs.getString("email", null)
-        val provider = prefs.getString("provider",null)
 
-        val authLinearLayout = findViewById<LinearLayout>(R.id.authLinearLayout)
-
-        //Si el email y el provider son diferentes de null, cargar el Panel Principal
-        if (email != null && provider != null){
-            authLinearLayout.visibility = View.INVISIBLE
-            showMain(email, ProviderType.valueOf(provider))
+        val auth = FirebaseAuth.getInstance()
+        
+        try {
+            val nombreArchivo1 = "prefs_email.txt"
+            val nombreArchivo2 = "prfs_provider.txt"
+            val prefs_email = File(applicationContext.getExternalFilesDir(null), nombreArchivo1)
+            val prefs_provider = File(applicationContext.getExternalFilesDir(null), nombreArchivo2)
+            Toast.makeText(this, "CONFIGURACIÓN GUARDADA: "+prefs_email.readText()+" "+prefs_provider.readText(), Toast.LENGTH_LONG).show()
+            if(prefs_email.readText() == auth.currentUser?.email){
+                showMain(email = prefs_email.readText(), provider = ProviderType.BASIC)
+            }else{
+                Toast.makeText(this, "Email autenticado no corresponde al archvio prefs generado.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (ex: Exception) {
+            //Log.e("TAG", "Error al leer el fichero desde la memoria interna")
+            Toast.makeText(this, "Error al leer el fichero desde la memoria interna.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -183,7 +191,7 @@ class Autentificacion : AppCompatActivity() {
     private fun showMain(email: String, provider: ProviderType){
         val intent = Intent(this, MainActivity::class.java).apply {
             putExtra("email",email)
-            putExtra("provider",provider)
+            putExtra("provider",provider.name)
         }
         startActivity(intent)
         finish()

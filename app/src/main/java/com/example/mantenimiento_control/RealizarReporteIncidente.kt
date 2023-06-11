@@ -39,7 +39,6 @@ class RealizarReporteIncidente : AppCompatActivity() {
     private val dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm:ss a", Locale("es", "MX")))
 
     private val database = Firebase.database
-    private val db = FirebaseFirestore.getInstance()
 
     var imageUri : Uri = Uri.EMPTY
 

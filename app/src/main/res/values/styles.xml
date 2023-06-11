@@ -1,7 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="custom_floating_buttons">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@color/turquesa</item>
-    </style>
-</resources>
+<resources></resources>

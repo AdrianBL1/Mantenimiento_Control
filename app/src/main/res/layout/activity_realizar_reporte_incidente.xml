@@ -198,6 +198,4 @@
             app:layout_constraintStart_toStartOf="parent" />
     </LinearLayout>
 
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
