@@ -1,4 +1,4 @@
-package com.example.mantenimiento_control
+package com.adrianbl.mantenimiento_control
 
 import android.app.ProgressDialog
 import android.content.DialogInterface
@@ -7,12 +7,18 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AlertDialog
+import com.adrianbl.mantenimiento_control.models.Incidencia
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
@@ -20,15 +26,16 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class RegistrarEstadoIncidente : AppCompatActivity() {
+class RealizarReporteIncidente : AppCompatActivity() {
+    lateinit var email: String
 
-    lateinit var estadoSeleccionado: String
+    lateinit var rolSeleccionado: String
+    lateinit var areaSeleccionada: String
 
     //Fecha y Hora
     private val dateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm:ss a", Locale("es", "MX")))
 
     private val database = Firebase.database
-    private val db = FirebaseFirestore.getInstance()
 
     var imageUri : Uri = Uri.EMPTY
 
@@ -37,8 +44,8 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
     val fileName = SimpleDateFormat("dd_MM_yyyy_HH_mm_ss", Locale.getDefault()).format(Date())
 
     //PICKMEDIA
-    val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()){
-            uri ->
+    val pickMedia = registerForActivityResult(PickVisualMedia()){
+        uri ->
         if(uri!=null){
             //Imagen seleccionada
             Toast.makeText(this, "Imágen seleccionada.", Toast.LENGTH_SHORT).show()
@@ -55,24 +62,24 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registrar_estado_incidente)
+        setContentView(R.layout.activity_realizar_reporte_incidente)
 
         setup()
     }
 
     private fun setup() {
-        val btn_registrar_estado = findViewById<Button>(R.id.btn_registrar_estado)
+        val btn_levantar_reporte = findViewById<Button>(R.id.btn_levantar_reporte)
         val btn_limpiar = findViewById<Button>(R.id.btn_limpiar)
 
-        title = "Registrar Estado Incidencia"
+        title = "Realizar Reporte Incidencia"
 
-        //Spinner Estados
-        val spinner_estados = findViewById<Spinner>(R.id.spinner_estados)
-        val listaEstados = resources.getStringArray(R.array.estados)
-        val adaptadorEstados = ArrayAdapter(this, android.R.layout.simple_spinner_item,listaEstados)
-        spinner_estados.adapter = adaptadorEstados
+        //Spinner Roles
+        val spinner_roles = findViewById<Spinner>(R.id.spinner_roles)
+        val listaRoles = resources.getStringArray(R.array.roles)
+        val adaptadorRoles = ArrayAdapter(this, android.R.layout.simple_spinner_item,listaRoles)
+        spinner_roles.adapter = adaptadorRoles
 
-        spinner_estados.onItemSelectedListener = object:
+        spinner_roles.onItemSelectedListener = object:
             AdapterView.OnItemSelectedListener{
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -80,9 +87,33 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                Toast.makeText(this@RegistrarEstadoIncidente,"Seleccionó: "+listaEstados[position],
+                Toast.makeText(this@RealizarReporteIncidente,"Seleccionó: "+listaRoles[position],
                     Toast.LENGTH_SHORT).show()
-                estadoSeleccionado = listaEstados[position].toString()
+                rolSeleccionado = listaRoles[position].toString()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+        }
+
+        //Spinner Areas
+        val spinner_areas = findViewById<Spinner>(R.id.spinner_areas)
+        val listaAreas = resources.getStringArray(R.array.areas)
+        val adaptadorAreas = ArrayAdapter(this, android.R.layout.simple_spinner_item,listaAreas)
+        spinner_areas.adapter = adaptadorAreas
+
+        spinner_areas.onItemSelectedListener = object:
+            AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                Toast.makeText(this@RealizarReporteIncidente,"Seleccionó: "+listaAreas[position],
+                    Toast.LENGTH_SHORT).show()
+                areaSeleccionada = listaAreas[position].toString()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -91,15 +122,16 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
         }
 
         //Image Picker
-        btnImagenEvidencia = findViewById(R.id.btn_evidencia_estado)
+
+        btnImagenEvidencia = findViewById(R.id.btn_evidencia)
         imgView = findViewById(R.id.imageview)
         btnImagenEvidencia.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            pickMedia.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
         }
 
         //Acciones debajo del formulario
 
-        btn_registrar_estado.setOnClickListener {
+        btn_levantar_reporte.setOnClickListener {
             validar()
         }
 
@@ -108,23 +140,25 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
         }
     }
 
-    //Limpieza de datos
-    private fun limpiar() {
-        val descripcionEstadoIncidencia = findViewById<EditText>(R.id.txt_descripcion_estado_incidencia)
-        descripcionEstadoIncidencia.setText("")
-    }
-
     //Validar datos faltantes
     private fun validar() {
-        val descripcionEstadoIncidencia = findViewById<EditText>(R.id.txt_descripcion_estado_incidencia)
-        if (estadoSeleccionado.isNotEmpty() && descripcionEstadoIncidencia.text.toString().isNotEmpty()){
+        val descripcionIncidencia = findViewById<EditText>(R.id.txt_descripcion_incidencia)
+        if (rolSeleccionado.isNotEmpty() && areaSeleccionada.isNotEmpty() && descripcionIncidencia.text.toString().isNotEmpty()){
             registrar()
         } else {
-            if(estadoSeleccionado=="")
-                Toast.makeText(this, "Selecciona un Estado.", Toast.LENGTH_SHORT).show()
-            else if(descripcionEstadoIncidencia.text.toString()=="")
+            if(rolSeleccionado=="")
+                Toast.makeText(this, "Selecciona un Rol.", Toast.LENGTH_SHORT).show()
+            else if(areaSeleccionada=="")
+                Toast.makeText(this, "Selecciona un Area.", Toast.LENGTH_SHORT).show()
+            else if(descripcionIncidencia.text.toString()=="")
                 Toast.makeText(this, "Ingresa los detalles de la incidencia.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    //Limpieza de datos
+    private fun limpiar() {
+        val descripcionIncidencia = findViewById<EditText>(R.id.txt_descripcion_incidencia)
+        descripcionIncidencia.setText("")
     }
 
     //Proceso de registro de datos
@@ -137,17 +171,16 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
         }
     }
 
-    //Confirmacion de estado
     private fun showAlertConfirmar(){
         val builder = AlertDialog.Builder(this)
         val positiveButtonClick = { dialog: DialogInterface, which: Int ->
             uploadImage()
-            updateFirebase()
-            Toast.makeText(applicationContext, "Se ha confirmado el estado de la Incidencia", Toast.LENGTH_SHORT).show()
+            addFirebase()
+            Toast.makeText(applicationContext, "Se ha confirmado la Incidencia", Toast.LENGTH_SHORT).show()
         }
 
-        builder.setTitle("CONFIRMAR ESTADO DE LA INCIDENCIA")
-        builder.setMessage("¿Desea confirmar el estado?")
+        builder.setTitle("CONFIRMAR INCIDENCIA")
+        builder.setMessage("¿Desea confirmar incidencia?")
         builder.setNegativeButton("Cancelar",null)
         builder.setPositiveButton("Aceptar", DialogInterface.OnClickListener(function = positiveButtonClick))
 
@@ -159,7 +192,7 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
     private fun showAlertConfirmarNoImagen() {
         val builder = AlertDialog.Builder(this)
         val positiveButtonClick = { dialog: DialogInterface, which: Int ->
-            updateFirebase()
+            addFirebase()
             Toast.makeText(applicationContext, "Se ha confirmado el estado de la Incidencia", Toast.LENGTH_SHORT).show()
         }
 
@@ -178,14 +211,14 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
 
         val positiveButtonClick = { dialog: DialogInterface, which: Int ->
-            Toast.makeText(applicationContext, "Se ha dado enviado el estado de la Incidencia", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Se ha dado enviado la Incidencia", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        builder.setTitle("ESTADO REGISTRADO")
-        builder.setMessage("Estado de Incidencia registrado como "+estadoSeleccionado+"" +
+        builder.setTitle("INCIDENCIA CREADA")
+        builder.setMessage("Incidencia enviada a "+rolSeleccionado+" para el area "+areaSeleccionada+"" +
                 "\n "+dateTime)
         builder.setPositiveButton("Aceptar", DialogInterface.OnClickListener(function = positiveButtonClick))
         val dialog: AlertDialog = builder.create()
@@ -193,29 +226,34 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
     }
 
     //Cargar datos a firebase Database
-    private fun updateFirebase(){
-        val key = intent.getStringExtra("key")
-
-        val email = intent.getStringExtra("emailTransfer")
+    private fun addFirebase(){
+        val bundle = intent.extras
+        email = bundle?.getString("email").toString()
 
         val ref = database.getReference("incidencias")
+        val descripcionIncidencia = findViewById<EditText>(R.id.txt_descripcion_incidencia)
 
-        val descripcionEstadoIncidencia = findViewById<EditText>(R.id.txt_descripcion_estado_incidencia)
-
-        //TODO: CAMBIAR HASMAP POR EL MODELO DE LAS INCIDENCIAS
-        val incidencias = mapOf(
-            "estado" to estadoSeleccionado,
-            "datetimeAtencion" to dateTime.toString(),
-            "usuarioAtencion"  to "$email",
-            "descripcionEstado" to descripcionEstadoIncidencia.text.toString(),
-            "imagenEstadoIncidencia" to fileName
+        val incidencias = Incidencia(
+            key = null,
+            datetimeReporte = dateTime.toString(),
+            usuarioReporte = "$email",
+            rol = rolSeleccionado,
+            area = areaSeleccionada,
+            descripcion = descripcionIncidencia.text.toString(),
+            imagenIncidencia = fileName,
+            estado = "Pendiente",
+            datetimeAtencion = null,
+            usuarioAtencion = null,
+            descripcionEstado = null,
+            imagenEstadoIncidencia = null
         )
 
-        ref.child(key.toString()).updateChildren(incidencias).addOnSuccessListener {
-            showAlertConfirmed()
-        }.addOnFailureListener { exception ->
-            Toast.makeText(applicationContext, "Ha ocurrido un Error: ${exception.message}", Toast.LENGTH_SHORT).show()
-        }
+        ref.child(ref.push().key.toString()).setValue(incidencias)
+            .addOnSuccessListener {
+                showAlertConfirmed()
+            }.addOnFailureListener { exception ->
+                Toast.makeText(applicationContext, "Ha ocurrido un Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     //Cargar imágen a firebase storage
@@ -225,15 +263,15 @@ class RegistrarEstadoIncidente : AppCompatActivity() {
         progressDialog.setCancelable(false)
         progressDialog.show()
 
-        val storageRef = FirebaseStorage.getInstance().getReference("incidencias_estados/$fileName")
+        val storageRef = FirebaseStorage.getInstance().getReference("incidencias/$fileName")
 
         storageRef.putFile(imageUri)
             .addOnCompleteListener{
                 Toast.makeText(this, "Carga completa", Toast.LENGTH_SHORT).show()
                 if (progressDialog.isShowing) progressDialog.dismiss()
             }.addOnFailureListener{ exception ->
-                if (progressDialog.isShowing) progressDialog.dismiss()
-                Toast.makeText(applicationContext, "Carga fallida. Error: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
+                    if (progressDialog.isShowing) progressDialog.dismiss()
+            Toast.makeText(applicationContext, "Carga fallida. Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }

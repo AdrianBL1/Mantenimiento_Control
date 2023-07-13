@@ -1,4 +1,4 @@
-package com.example.mantenimiento_control
+package com.adrianbl.mantenimiento_control
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -25,7 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.example.mantenimiento_control.models.Incidencia
+import com.adrianbl.mantenimiento_control.models.Incidencia
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener

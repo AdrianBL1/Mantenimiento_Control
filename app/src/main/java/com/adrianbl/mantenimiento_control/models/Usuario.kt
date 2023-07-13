@@ -1,4 +1,4 @@
-package com.example.mantenimiento_control.models
+package com.adrianbl.mantenimiento_control.models
 
 import com.google.firebase.database.IgnoreExtraProperties
 

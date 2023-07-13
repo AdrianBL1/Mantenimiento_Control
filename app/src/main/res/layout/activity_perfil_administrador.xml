@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/degradado"
-    tools:context=".PerfilAdministrador">
+    tools:context="com.adrianbl.mantenimiento_control.PerfilAdministrador">
 
     <LinearLayout
         android:id="@+id/scrollView2"

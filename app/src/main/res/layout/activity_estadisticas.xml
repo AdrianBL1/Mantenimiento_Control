@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/turquesa"
-    tools:context=".Estadisticas">
+    tools:context="com.adrianbl.mantenimiento_control.Estadisticas">
 
     <LinearLayout
         android:id="@+id/linearLayout1"

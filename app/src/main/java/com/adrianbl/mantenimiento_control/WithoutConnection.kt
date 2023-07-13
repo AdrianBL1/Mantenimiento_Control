@@ -1,4 +1,4 @@
-package com.example.mantenimiento_control
+package com.adrianbl.mantenimiento_control
 
 import android.content.Intent
 import android.net.ConnectivityManager

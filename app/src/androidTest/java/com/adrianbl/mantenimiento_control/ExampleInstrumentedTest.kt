@@ -1,4 +1,4 @@
-package com.example.mantenimiento_control
+package com.adrianbl.mantenimiento_control
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

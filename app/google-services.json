@@ -1,18 +1,27 @@
 {
   "project_info": {
     "project_number": "906158301320",
+    "firebase_url": "https://controlmantenimiento-eb25a-default-rtdb.firebaseio.com",
     "project_id": "controlmantenimiento-eb25a",
     "storage_bucket": "controlmantenimiento-eb25a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:906158301320:android:a670a7f30eaa8a56103f3d",
+        "mobilesdk_app_id": "1:906158301320:android:8953342dbd1d88bc103f3d",
         "android_client_info": {
-          "package_name": "com.example.mantenimiento_control"
+          "package_name": "com.adrianbl.mantenimiento_control"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "906158301320-d34lfcmdvvckfqc3u8c5m1jl800ntfeg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adrianbl.mantenimiento_control",
+            "certificate_hash": "d98321d51b013f155949366a0ef341a2c42912e9"
+          }
+        },
         {
           "client_id": "906158301320-caa8oscrmdc0a156bjtgiuk8222c4pup.apps.googleusercontent.com",
           "client_type": 3

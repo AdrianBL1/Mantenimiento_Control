@@ -1,4 +1,4 @@
-package com.example.mantenimiento_control
+package com.adrianbl.mantenimiento_control
 
 import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
@@ -12,8 +12,8 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
-import com.example.mantenimiento_control.fragments.TimePickerFragment
-import com.example.mantenimiento_control.models.Usuario
+import com.adrianbl.mantenimiento_control.fragments.TimePickerFragment
+import com.adrianbl.mantenimiento_control.models.Usuario
 import com.google.firebase.firestore.FirebaseFirestore
 
 class PerfilAdministrador : AppCompatActivity() {

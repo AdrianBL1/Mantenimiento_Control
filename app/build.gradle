@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace 'com.example.mantenimiento_control'
+    namespace 'com.adrianbl.mantenimiento_control'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.mantenimiento_control"
+        applicationId 'com.adrianbl.mantenimiento_control'
         minSdk 26
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName '1.1'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

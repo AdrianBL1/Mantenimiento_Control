@@ -21,34 +21,34 @@
         android:theme="@style/Theme.Mantenimiento_Control"
         tools:targetApi="31">
         <activity
-            android:name=".WithoutConnection"
+            android:name="com.adrianbl.mantenimiento_control.WithoutConnection"
             android:exported="false" />
         <activity
-            android:name=".Estadisticas"
+            android:name="com.adrianbl.mantenimiento_control.Estadisticas"
             android:exported="false" />
         <activity
-            android:name=".ExportReport"
+            android:name="com.adrianbl.mantenimiento_control.ExportReport"
             android:exported="false" />
         <activity
-            android:name=".PerfilAdministrador"
+            android:name="com.adrianbl.mantenimiento_control.PerfilAdministrador"
             android:exported="false" />
         <activity
-            android:name=".RegistrarEstadoIncidente"
+            android:name="com.adrianbl.mantenimiento_control.RegistrarEstadoIncidente"
             android:exported="false" />
         <activity
-            android:name=".RealizarReporteIncidente"
+            android:name="com.adrianbl.mantenimiento_control.RealizarReporteIncidente"
             android:exported="false" />
         <activity
-            android:name=".PerfilUsuario"
+            android:name="com.adrianbl.mantenimiento_control.PerfilUsuario"
             android:exported="false" />
         <activity
-            android:name=".ReporteIncidente"
+            android:name="com.adrianbl.mantenimiento_control.ReporteIncidente"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.adrianbl.mantenimiento_control.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".Autentificacion"
+            android:name="com.adrianbl.mantenimiento_control.Autentificacion"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
             <intent-filter>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Autentificacion"
+    tools:context="com.adrianbl.mantenimiento_control.Autentificacion"
     android:background="#A9CCE3"
     android:textAlignment="center">
 
