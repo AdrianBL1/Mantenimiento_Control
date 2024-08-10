@@ -217,7 +217,7 @@ Formato del PDF generado de una Incidencia completada:
 El documento exportado se alamacena en el dispositivo movil y contiene todos los datos de la incidencia desde que se reporta hasta que se atiende y los datos correspondientes. Para este caso algunos datos son omitidos.
 
 <div align="center">
-    <img src="/docs/exportacion_pdf.png" height="600px" alt="PDF Exportado">
+    <img src="/docs/exportacion_pdf.PNG" height="600px" alt="PDF Exportado">
 </div>
 
 ### Estadisticas (Desarrollo trunco):
