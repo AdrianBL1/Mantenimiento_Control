@@ -14,6 +14,7 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="37dp">
 
+        <!--
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
@@ -41,6 +42,41 @@
                 app:icon="@drawable/baseline_person_24" />
 
         </GridLayout>
+        -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txtPp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif"
+                android:text="PANEL PRINCIPAL"
+                android:textSize="24sp"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toStartOf="@+id/btn_perfil"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <Button
+                android:id="@+id/btn_perfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_buttom"
+                android:text="@string/perfil"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@+id/txtPp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:icon="@drawable/baseline_person_24" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

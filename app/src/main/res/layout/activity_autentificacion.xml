@@ -110,7 +110,6 @@
                 android:fontFamily="monospace"
                 android:text="@string/ingresar" />
 
-            <!--
             <Button
                 android:id="@+id/btn_ingresar_google"
                 android:layout_width="match_parent"
@@ -125,7 +124,6 @@
                 android:minHeight="48dp"
                 android:padding="10dp"
                 android:text="Ingresar con Google" />
-                -->
 
             <Button
                 android:id="@+id/btn_registrar"

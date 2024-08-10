@@ -300,7 +300,6 @@ class ExportReport : AppCompatActivity() {
         //Fnalizar pagina
         pdfDocument.finishPage(pagina1)
 
-
         //Crear documento
 
         //Fecha y Hora
